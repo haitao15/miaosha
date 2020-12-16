@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>创建商品</title>
+</head>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
+<body>
+<div>
+    <h3>商品详情</h3>
+    <div>
+        <label>商品名</label>
+        <div>
+            <label id="title"/>
+        </div>
+    </div>
+    <div>
+        <label>描述</label>
+        <div>
+            <label id="description"/>
+        </div>
+    </div>
+    <div>
+        <label>价格</label>
+        <div>
+            <label id="price"/>
+        </div>
+    </div>
+    <div>
+        <label>图片</label>
+        <div>
+            <label id="imgUrl"/>
+        </div>
+    </div>
+    <div>
+        <label>库存</label>
+        <div>
+            <label id="stock"/>
+        </div>
+    </div>
+    <div>
+        <label>销量</label>
+        <div>
+            <label id="sales"/>
+        </div>
+    </div>
+    <div>
+        <button id="createorder">
+            下单
+        </button>
+    </div>
+
+</div>
+</body>
+<script>
+    jQuery(document).ready(function () {
+        function getParam(paramName) {
+            paramValue = "", isFound = !1;
+            if (this.location.search.indexOf("?") == 0 && this.location.search.indexOf("=") > 1) {
+                arrSource = unescape(this.location.search).substring(1, this.location.search.length).split("&"), i = 0;
+                while (i < arrSource.length && !isFound) arrSource[i].indexOf("=") > 0 && arrSource[i].split("=")[0].toLowerCase() == paramName.toLowerCase() && (paramValue = arrSource[i].split("=")[1], isFound = !0), i++
+            }
+            return paramValue == "" && (paramValue = null), paramValue
+        }
+
+        var itemVO = {};
+        $("#createorder").on("click",function () {
+            $.ajax({
+                type: "POST",
+                contentType:"application/x-www-form-urlencoded",
+                url: "http://localhost:8090/order/createorder",
+                data: {
+                    "itemId": itemVO.id,
+                    "amount":1
+                },
+                xhrFields: {withCredentials: true},
+                success: function (data) {
+                    if (data.status == "success") {
+                        alert("下单成功")
+                        window.location.reload()
+                    } else {
+                        alert("下单失败"+data.data.errMsg);
+                        if(data.data.errCode == 20003) {
+                            window.location.href="login.html";
+                        }
+                    }
+                },
+                error: function (data) {
+                    alert("下单失败" + data.responseText)
+                }
+            });
+        })
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:8090/item/get",
+            data: {
+                "id": getParam("id"),
+            },
+            xhrFields: {withCredentials: true},
+            success: function (data) {
+                if (data.status == "success") {
+                    itemVO = data.data;
+                    reloadDom();
+                    // alert("获取信息成功")
+                } else {
+                    alert("获取信息失败", data.data.errMsg)
+                }
+            },
+            error: function (data) {
+                alert("获取信息失败" + data.responseText)
+            }
+        });
+        return false;
+
+        function reloadDom() {
+            $("#title").text(itemVO.title);
+            $("#description").text(itemVO.description);
+            $("#price").text(itemVO.price);
+            $("#imgUrl").text(itemVO.imgUrl);
+            $("#stock").text(itemVO.stock);
+            $("#sales").text(itemVO.sales);
+        }
+
+    })
+</script>
+</html>
