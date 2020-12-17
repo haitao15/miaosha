@@ -69,6 +69,12 @@ public class ItemController extends BaseController {
         }
         ItemVO itemVO = new ItemVO();
         BeanUtils.copyProperties(itemModel,itemVO);
+        if (itemModel.getPromoModel() != null) {
+            itemVO.setPromoId(itemModel.getPromoModel().getId());
+            itemVO.setPromoStatus(itemModel.getPromoModel().getStatus());
+            itemVO.setStartDate(itemModel.getPromoModel().getDateTime());
+            itemVO.setPromoPrice(itemModel.getPromoModel().getPromoItemPice());
+        }
         return itemVO;
     }
 

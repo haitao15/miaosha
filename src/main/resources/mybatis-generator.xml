@@ -68,8 +68,12 @@
         <table tableName="order_info" domainObjectName="Order" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false"
                enableSelectByExample="false" selectByExampleQueryId="false"
-               enableInsert="true" enableDeleteByPrimaryKey="false" ></table>-->
+               enableInsert="true" enableDeleteByPrimaryKey="false" ></table>
         <table tableName="sequence_info" domainObjectName="Sequence" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false"
+               enableInsert="true" enableDeleteByPrimaryKey="false" ></table>-->
+        <table tableName="promo" domainObjectName="Promo" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false"
                enableSelectByExample="false" selectByExampleQueryId="false"
                enableInsert="true" enableDeleteByPrimaryKey="false" ></table>

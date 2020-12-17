@@ -28,6 +28,16 @@ public class ItemModel {
     @NotBlank(message = "不可无图")
     private String imgUrl;
 
+    private PromoModel promoModel;
+
+    public PromoModel getPromoModel() {
+        return promoModel;
+    }
+
+    public void setPromoModel(PromoModel promoModel) {
+        this.promoModel = promoModel;
+    }
+
     public Integer getId() {
         return id;
     }
