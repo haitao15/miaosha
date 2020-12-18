@@ -5,12 +5,14 @@ import com.miaoshaproject.error.BusinessException;
 import com.miaoshaproject.response.CommonReturnType;
 import com.miaoshaproject.service.ItemService;
 import com.miaoshaproject.service.model.ItemModel;
+import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,7 +74,7 @@ public class ItemController extends BaseController {
         if (itemModel.getPromoModel() != null) {
             itemVO.setPromoId(itemModel.getPromoModel().getId());
             itemVO.setPromoStatus(itemModel.getPromoModel().getStatus());
-            itemVO.setStartDate(itemModel.getPromoModel().getDateTime());
+            itemVO.setStartDate(itemModel.getPromoModel().getDateTime().toString(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")));
             itemVO.setPromoPrice(itemModel.getPromoModel().getPromoItemPice());
         }
         return itemVO;

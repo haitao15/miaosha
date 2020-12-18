@@ -40,7 +40,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderModel createOrder(Integer userId, Integer itemId, Integer amount) throws BusinessException {
+    public OrderModel createOrder(Integer userId, Integer itemId, Integer promoId, Integer amount) throws BusinessException {
         ItemModel itemModel = itemService.getItemById(itemId);
         if (itemModel == null) {
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR, "商品不存在");
@@ -52,6 +52,15 @@ public class OrderServiceImpl implements OrderService {
         if (amount <= 0 || amount > 99) {
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR, "数量不正确");
         }
+
+        if (promoId != null) {
+            if (promoId.intValue() != itemModel.getPromoModel().getId()) {
+                throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR, "活动不正确");
+            } else if (itemModel.getPromoModel().getStatus().intValue() != 2) {
+                throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR, "活动未开始");
+            }
+        }
+
         boolean result = itemService.decreaseStock(itemId, amount);
         if (!result) {
             throw new BusinessException(EmBusinessError.STOCK_NOT_ENOUGH, "库存不足");
@@ -61,9 +70,14 @@ public class OrderServiceImpl implements OrderService {
         orderModel.setUserId(userId);
         orderModel.setItemId(itemId);
         orderModel.setAmount(amount);
-        orderModel.setItemPrice(itemModel.getPrice());
-        orderModel.setOrderPrice(itemModel.getPrice().multiply(new BigDecimal(amount)));
+        if (promoId != null) {
+            orderModel.setItemPrice(itemModel.getPromoModel().getPromoItemPice());
+        }else {
+            orderModel.setItemPrice(itemModel.getPrice());
+        }
+        orderModel.setOrderPrice(orderModel.getItemPrice().multiply(new BigDecimal(amount)));
         orderModel.setId(generateOrderNo());
+        orderModel.setPromoId(promoId);
         Order order = convertFromOrderModel(orderModel);
         orderMapper.insertSelective(order);
         itemService.increaseSales(itemId, amount);
@@ -75,7 +89,7 @@ public class OrderServiceImpl implements OrderService {
         int sequnce = 0;
         StringBuilder stringBuilder = new StringBuilder();
         LocalDateTime localDateTime = LocalDateTime.now();
-        localDateTime.format(DateTimeFormatter.ISO_DATE).replace("-","");
+        localDateTime.format(DateTimeFormatter.ISO_DATE).replace("-", "");
         stringBuilder.append(localDateTime);
 
         Sequence order_info = sequenceMapper.getSequenceByName("order_info");

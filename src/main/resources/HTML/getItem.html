@@ -14,16 +14,28 @@
             <label id="title"/>
         </div>
     </div>
+    <div id="promoStartDateContainer">
+        <label style="color:BLUE" id="promoStatus"></label>
+        <div>
+            <label style="color: red" id="promoStartDate"/>
+        </div>
+    </div>
     <div>
         <label>描述</label>
         <div>
             <label id="description"/>
         </div>
     </div>
-    <div>
+    <div id="normalPrice">
         <label>价格</label>
         <div>
             <label id="price"/>
+        </div>
+    </div>
+    <div id="promoPriceContainer">
+        <label style="color:red">秒杀价格</label>
+        <div>
+            <label style="color: red" id="promoPrice"/>
         </div>
     </div>
     <div>
@@ -64,14 +76,15 @@
         }
 
         var itemVO = {};
-        $("#createorder").on("click",function () {
+        $("#createorder").on("click", function () {
             $.ajax({
                 type: "POST",
-                contentType:"application/x-www-form-urlencoded",
+                contentType: "application/x-www-form-urlencoded",
                 url: "http://localhost:8090/order/createorder",
                 data: {
                     "itemId": itemVO.id,
-                    "amount":1
+                    "amount": 1,
+                    "promoId": itemVO.promoId
                 },
                 xhrFields: {withCredentials: true},
                 success: function (data) {
@@ -79,9 +92,9 @@
                         alert("下单成功")
                         window.location.reload()
                     } else {
-                        alert("下单失败"+data.data.errMsg);
-                        if(data.data.errCode == 20003) {
-                            window.location.href="login.html";
+                        alert("下单失败" + data.data.errMsg);
+                        if (data.data.errCode == 20003) {
+                            window.location.href = "login.html";
                         }
                     }
                 },
@@ -101,6 +114,7 @@
                 if (data.status == "success") {
                     itemVO = data.data;
                     reloadDom();
+                    setInterval(reloadDom, 1000);
                     // alert("获取信息成功")
                 } else {
                     alert("获取信息失败", data.data.errMsg)
@@ -119,6 +133,24 @@
             $("#imgUrl").text(itemVO.imgUrl);
             $("#stock").text(itemVO.stock);
             $("#sales").text(itemVO.sales);
+            if (itemVO.promoStatus == 1) {
+                var start = itemVO.startDate.replace(new RegExp("-", "gm"), "/");
+                start = (new Date(start)).getTime();
+                var now = Date.parse(new Date());
+                var delta = (start - now) / 1000;
+                if(delta <= 0) {
+                    itemVO.promoStatus == 2;
+                    reloadDom();
+                }
+                $("#promoStartDate").text("秒杀开始于: " + itemVO.startDate + "...倒计时" + delta + "秒！");
+                $("#promoPrice").text(itemVO.promoPrice);
+                $("#createorder").attr("disabled", true);
+            } else if (itemVO.promoStatus == 2) {
+                $("#promoStartDate").text("秒杀正在进行 ");
+                $("#promoPrice").text(itemVO.promoPrice);
+                $("#createorder").attr("disabled", false);
+                $("#normalPrice").hide();
+            }
         }
 
     })

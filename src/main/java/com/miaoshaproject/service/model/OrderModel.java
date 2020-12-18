@@ -10,6 +10,8 @@ public class OrderModel {
 
     private Integer itemId;
 
+    private Integer promoId;
+
     private Integer amount;
 
     private BigDecimal itemPrice;
@@ -22,6 +24,14 @@ public class OrderModel {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Integer getPromoId() {
+        return promoId;
+    }
+
+    public void setPromoId(Integer promoId) {
+        this.promoId = promoId;
     }
 
     public Integer getUserId() {

@@ -5,5 +5,5 @@ import com.miaoshaproject.service.model.OrderModel;
 
 public interface OrderService {
 
-    OrderModel createOrder(Integer userid, Integer itemId, Integer amount) throws BusinessException;
+    OrderModel createOrder(Integer userid, Integer itemId, Integer promoId, Integer amount) throws BusinessException;
 }
